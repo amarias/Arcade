@@ -1,17 +1,17 @@
 ******************************************************************************
                   TI ARM Linker Unix v18.12.4                  
 ******************************************************************************
->> Linked Mon Dec  9 14:49:12 2019
+>> Linked Mon Dec 23 14:06:00 2019
 
 OUTPUT FILE NAME:   <arcade.out>
-ENTRY POINT SYMBOL: "_c_int00_noinit_noargs"  address: 00000661
+ENTRY POINT SYMBOL: "_c_int00_noinit_noargs"  address: 00000825
 
 
 MEMORY CONFIGURATION
 
          name            origin    length      used     unused   attr    fill
 ----------------------  --------  ---------  --------  --------  ----  --------
-  FLASH                 00000000   00040000  000006a0  0003f960  R  X
+  FLASH                 00000000   00040000  00000864  0003f79c  R  X
   SRAM                  20000000   00008000  00000200  00007e00  RW X
 
 
@@ -19,9 +19,9 @@ SEGMENT ALLOCATION MAP
 
 run origin  load origin   length   init length attrs members
 ----------  ----------- ---------- ----------- ----- -------
-00000000    00000000    000006a0   000006a0    r-x
+00000000    00000000    00000864   00000864    r-x
   00000000    00000000    0000026c   0000026c    r-- .intvecs
-  0000026c    0000026c    00000434   00000434    r-x .text
+  0000026c    0000026c    000005f8   000005f8    r-x .text
 20000000    20000000    00000200   00000000    rw-
   20000000    20000000    00000200   00000000    rw- .stack
 
@@ -34,14 +34,14 @@ section   page    origin      length       input sections
 .intvecs   0    00000000    0000026c     
                   00000000    0000026c     tm4c123gh6pm_startup_ccs.obj (.intvecs)
 
-.text      0    0000026c    00000434     
-                  0000026c    00000338     lcd.obj (.text)
-                  000005a4    00000064     timer.obj (.text)
-                  00000608    00000058     main.obj (.text)
-                  00000660    0000002c     rtsv7M4_T_le_v4SPD16_eabi.lib : boot_cortex_m.c.obj (.text:_c_int00_noinit_noargs:_c_int00_noinit_noargs)
-                  0000068c    0000000c     tm4c123gh6pm_startup_ccs.obj (.text)
-                  00000698    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : pre_init.c.obj (.text:_system_pre_init)
-                  0000069c    00000004                                   : exit.c.obj (.text:abort:abort)
+.text      0    0000026c    000005f8     
+                  0000026c    000004d4     lcd.obj (.text)
+                  00000740    0000008c     timer.obj (.text)
+                  000007cc    00000058     main.obj (.text)
+                  00000824    0000002c     rtsv7M4_T_le_v4SPD16_eabi.lib : boot_cortex_m.c.obj (.text:_c_int00_noinit_noargs:_c_int00_noinit_noargs)
+                  00000850    0000000c     tm4c123gh6pm_startup_ccs.obj (.text)
+                  0000085c    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : pre_init.c.obj (.text:_system_pre_init)
+                  00000860    00000004                                   : exit.c.obj (.text:abort:abort)
 
 .cinit     0    00000000    00000000     UNINITIALIZED
 
@@ -57,12 +57,12 @@ MODULE SUMMARY
        Module                         code   ro data   rw data
        ------                         ----   -------   -------
     ./
-       lcd.obj                        824    0         0      
+       lcd.obj                        1236   0         0      
        tm4c123gh6pm_startup_ccs.obj   12     620       0      
-       timer.obj                      100    0         0      
+       timer.obj                      140    0         0      
        main.obj                       88     0         0      
     +--+------------------------------+------+---------+---------+
-       Total:                         1024   620       0      
+       Total:                         1476   620       0      
                                                               
     /home/amarias/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/lib/rtsv7M4_T_le_v4SPD16_eabi.lib
        boot_cortex_m.c.obj            44     0         0      
@@ -73,15 +73,15 @@ MODULE SUMMARY
                                                               
        Stack:                         0      0         512    
     +--+------------------------------+------+---------+---------+
-       Grand Total:                   1076   620       512    
+       Grand Total:                   1528   620       512    
 
 
 GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name 
 
 address   name                  
 -------   ----                  
-0000069d  C$$EXIT               
-0000068d  ResetISR              
+00000861  C$$EXIT               
+00000851  ResetISR              
 20000200  __STACK_END           
 00000200  __STACK_SIZE          
 20000200  __STACK_TOP           
@@ -93,26 +93,31 @@ ffffffff  __binit__
 ffffffff  __c_args__            
 UNDEFED   __mpu_init            
 20000000  __stack               
-00000661  _c_int00_noinit_noargs
-00000699  _system_pre_init      
-0000069d  abort                 
+00000825  _c_int00_noinit_noargs
+0000085d  _system_pre_init      
+00000861  abort                 
 ffffffff  binit                 
 00000309  clearDisplay          
-00000337  drawA                 
-00000483  drawLogo              
-000003c7  drawM                 
+0000036f  drawA                 
+00000581  drawLogo              
+000004bf  drawM                 
+00000337  drawPixel             
+00000363  drawSpace             
+000003ff  drawa                 
+00000477  drawl                 
 00000000  g_pfnVectors          
-00000609  greenLED              
-00000535  initLCD               
-000004b1  initSSI               
-000005a5  initTimer             
-00000643  main                  
-000004af  menu                  
+000007cd  greenLED              
+000006d3  initLCD               
+00000645  initSSI               
+00000741  initTimer             
+00000807  main                  
+00000639  menu                  
 000002a9  reset                 
 000002c7  setAddress            
-00000629  setup                 
+000007ed  setup                 
 0000026d  transmitData          
-000005c9  wait_1ms              
+00000765  wait_1ms              
+00000797  wait_1s               
 
 
 GLOBAL SYMBOLS: SORTED BY Symbol Address 
@@ -126,22 +131,27 @@ address   name
 000002a9  reset                 
 000002c7  setAddress            
 00000309  clearDisplay          
-00000337  drawA                 
-000003c7  drawM                 
-00000483  drawLogo              
-000004af  menu                  
-000004b1  initSSI               
-00000535  initLCD               
-000005a5  initTimer             
-000005c9  wait_1ms              
-00000609  greenLED              
-00000629  setup                 
-00000643  main                  
-00000661  _c_int00_noinit_noargs
-0000068d  ResetISR              
-00000699  _system_pre_init      
-0000069d  C$$EXIT               
-0000069d  abort                 
+00000337  drawPixel             
+00000363  drawSpace             
+0000036f  drawA                 
+000003ff  drawa                 
+00000477  drawl                 
+000004bf  drawM                 
+00000581  drawLogo              
+00000639  menu                  
+00000645  initSSI               
+000006d3  initLCD               
+00000741  initTimer             
+00000765  wait_1ms              
+00000797  wait_1s               
+000007cd  greenLED              
+000007ed  setup                 
+00000807  main                  
+00000825  _c_int00_noinit_noargs
+00000851  ResetISR              
+0000085d  _system_pre_init      
+00000861  C$$EXIT               
+00000861  abort                 
 20000000  __stack               
 20000200  __STACK_END           
 20000200  __STACK_TOP           
@@ -153,4 +163,4 @@ ffffffff  __c_args__
 ffffffff  binit                 
 UNDEFED   __mpu_init            
 
-[33 symbols]
+[38 symbols]

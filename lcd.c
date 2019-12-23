@@ -105,7 +105,25 @@ void clearDisplay(){
 }
 
 /**
- * Draws fancy 'A'
+ * Draws a single dot
+ * Requires an address
+ * position (1-8): which of the 8 bits to draw
+ */
+void drawPixel(uint8_t x, uint8_t y, uint8_t position){
+    setAddress(x, y);
+    transmitData(DATA_MODE, 1 << position);
+}
+
+
+/**
+ * Blank column
+ */
+void drawSpace(){
+    transmitData(DATA_MODE, 0x00);
+}
+
+/**
+ * Draws cursive 'A'
  * Requires an address
  */
 void drawA(uint8_t x, uint8_t y){
@@ -126,8 +144,41 @@ void drawA(uint8_t x, uint8_t y){
     transmitData(DATA_MODE, 0x02);
 }
 
+
 /**
- * Draws fancy 'M'
+ * Draws cursive 'a'
+ * Requires an address
+ */
+void drawa(uint8_t x, uint8_t y){
+    setAddress(x, y);
+    transmitData(DATA_MODE, 0x80);
+    transmitData(DATA_MODE, 0x40);
+    transmitData(DATA_MODE, 0x40);
+    transmitData(DATA_MODE, 0xC0);
+    setAddress(x, y+1);
+    transmitData(DATA_MODE, 0x03);
+    transmitData(DATA_MODE, 0x04);
+    transmitData(DATA_MODE, 0x04);
+    transmitData(DATA_MODE, 0x03);
+    transmitData(DATA_MODE, 0x04);
+    transmitData(DATA_MODE, 0x02);
+}
+
+/**
+ * Draws cursive 'l'
+ * Requires an address
+ */
+void drawl(uint8_t x, uint8_t y){
+    setAddress(x, y);
+    transmitData(DATA_MODE, 0x00);
+    transmitData(DATA_MODE, 0xF0);
+    setAddress(x, y+1);
+    transmitData(DATA_MODE, 0x04);
+    transmitData(DATA_MODE, 0x03);
+}
+
+/**
+ * Draws cursive 'M'
  * Requires an address
  */
 void drawM(uint8_t x, uint8_t y){
@@ -159,6 +210,21 @@ void drawLogo()
     uint8_t y = 2;
     drawA(x, y);
     drawM(x+6, y);
+    wait_1s(2);
+    clearDisplay();
+    x = 30;
+    y = 2;
+    drawA(x, y);
+    drawl(x+6, y);
+    drawl(x+8, y);
+    drawSpace();
+    x = 41;
+    y = 2;
+    drawM(x, y);
+    x = 51;
+    y = 2;
+    drawPixel(x, y+1, 3); // Instead of space, connect the cursive letters
+    drawa(x+1, y);
 }
 
 // Not finished
