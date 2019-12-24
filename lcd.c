@@ -10,6 +10,7 @@
 #include "tm4c123gh6pm.h"
 #include "lcd.h"
 #include "timer.h"
+#include "letters.h"
 #include <stdint.h>
 
 /**
@@ -64,17 +65,20 @@
 
 #define FIFO_NOT_EMPTY ((SSI0_SR_R & (1<<0)) == 0) // The transmit FIFO is not empty
 
-
 // SSI Transmit Data
 void transmitData(uint8_t mode, uint8_t data)
 {
-    if(mode == COMMAND_MODE){
+    if (mode == COMMAND_MODE)
+    {
         GPIO_PORTA_DATA_R &= ~DC;
-    } else {
+    }
+    else
+    {
         GPIO_PORTA_DATA_R |= DC;
     }
     SSI0_DR_R = data;
-    while (FIFO_NOT_EMPTY);
+    while (FIFO_NOT_EMPTY)
+        ;
 }
 
 /**
@@ -89,142 +93,229 @@ void reset()
 
 void setAddress(uint8_t x, uint8_t y)
 {
-    if((x <= 83) && (y <= 5)){
+    if ((x <= 83) && (y <= 5))
+    {
         transmitData(COMMAND_MODE, BASIC_INSTRUCTION);
         transmitData(COMMAND_MODE, X_ADDRESS | x);
         transmitData(COMMAND_MODE, Y_ADDRESS | y);
     }
 }
 
-void clearDisplay(){
+void clearDisplay()
+{
     setAddress(0, 0);
     int i;
-    for (i = 0; i < COLS*(ROWS/8); ++i) {
+    for (i = 0; i < COLS * (ROWS / 8); ++i)
+    {
         transmitData(DATA_MODE, 0x00);
     }
 }
 
 /**
- * Draws a single dot
+ * Draws a single dot on a column
  * Requires an address
- * position (1-8): which of the 8 bits to draw
+ * offset (0-7): which of the 8 bits to draw
  */
-void drawPixel(uint8_t x, uint8_t y, uint8_t position){
+void drawPixel(uint8_t x, uint8_t y, uint8_t offset)
+{
     setAddress(x, y);
-    transmitData(DATA_MODE, 1 << position);
-}
-
-
-/**
- * Blank column
- */
-void drawSpace(){
-    transmitData(DATA_MODE, 0x00);
+    transmitData(DATA_MODE, 1 << offset);
 }
 
 /**
- * Draws cursive 'A'
- * Requires an address
+ * Create data for a vertical line
+ * offset (0-7): where to (vertically) start drawing the line
  */
-void drawA(uint8_t x, uint8_t y){
-    setAddress(x, y);
-    transmitData(DATA_MODE, 0xC0);
-    transmitData(DATA_MODE, 0x20);
-    transmitData(DATA_MODE, 0x10);
-    transmitData(DATA_MODE, 0x10);
-    transmitData(DATA_MODE, 0xD0);
-    setAddress(x, y+1);
-    transmitData(DATA_MODE, 0x03);
-    transmitData(DATA_MODE, 0x04);
-    transmitData(DATA_MODE, 0x04);
-    transmitData(DATA_MODE, 0x04);
-    transmitData(DATA_MODE, 0x03);
-    transmitData(DATA_MODE, 0x04);
-    transmitData(DATA_MODE, 0x04);
-    transmitData(DATA_MODE, 0x02);
-}
-
-
-/**
- * Draws cursive 'a'
- * Requires an address
- */
-void drawa(uint8_t x, uint8_t y){
-    setAddress(x, y);
-    transmitData(DATA_MODE, 0x80);
-    transmitData(DATA_MODE, 0x40);
-    transmitData(DATA_MODE, 0x40);
-    transmitData(DATA_MODE, 0xC0);
-    setAddress(x, y+1);
-    transmitData(DATA_MODE, 0x03);
-    transmitData(DATA_MODE, 0x04);
-    transmitData(DATA_MODE, 0x04);
-    transmitData(DATA_MODE, 0x03);
-    transmitData(DATA_MODE, 0x04);
-    transmitData(DATA_MODE, 0x02);
+uint8_t getVerticalData(uint8_t offset, uint8_t width)
+{
+    uint8_t data = 0x00;
+    int i;
+    for (i = 0; i < width; i++)
+    {
+        data |= 1 << offset;
+    }
+    return data;
 }
 
 /**
- * Draws cursive 'l'
+ * Draws the given shape from left to right
  * Requires an address
+ * offset (0-7): where to start drawing in the y-address
  */
-void drawl(uint8_t x, uint8_t y){
+void drawShape(uint8_t x, uint8_t y, uint8_t offset, uint8_t shape[],
+               int arraySize)
+{
     setAddress(x, y);
-    transmitData(DATA_MODE, 0x00);
-    transmitData(DATA_MODE, 0xF0);
-    setAddress(x, y+1);
-    transmitData(DATA_MODE, 0x04);
-    transmitData(DATA_MODE, 0x03);
-}
 
-/**
- * Draws cursive 'M'
- * Requires an address
- */
-void drawM(uint8_t x, uint8_t y){
-    setAddress(x, y);
-    transmitData(DATA_MODE, 0x20);
-    transmitData(DATA_MODE, 0x10);
-    transmitData(DATA_MODE, 0xF0);
-    transmitData(DATA_MODE, 0x20);
-    transmitData(DATA_MODE, 0x10);
-    transmitData(DATA_MODE, 0x10);
-    transmitData(DATA_MODE, 0xE0);
-    transmitData(DATA_MODE, 0x10);
-    transmitData(DATA_MODE, 0x10);
-    transmitData(DATA_MODE, 0xE0);
-    setAddress(x+2, y+1);
-    transmitData(DATA_MODE, 0x07);
-    transmitData(DATA_MODE, 0x00);
-    transmitData(DATA_MODE, 0x00);
-    transmitData(DATA_MODE, 0x00);
-    transmitData(DATA_MODE, 0x07);
-    transmitData(DATA_MODE, 0x00);
-    transmitData(DATA_MODE, 0x00);
-    transmitData(DATA_MODE, 0x07);
+    int i;
+    uint8_t data;
+
+    for (i = 0; i < arraySize; i++)
+    {
+        data = shape[i] << offset;
+
+        if (data != shape[i])
+        { // check if the drawing spills over into the next y-address
+            setAddress(x, y + 1);
+            transmitData(DATA_MODE, shape[i] >> offset);
+            setAddress(x, y);
+        }
+
+        transmitData(DATA_MODE, data);
+        x++;
+    }
 }
 
 void drawLogo()
 {
+    uint8_t offset = 4;
+    uint32_t time = 200;
     uint8_t x = 33;
     uint8_t y = 2;
-    drawA(x, y);
-    drawM(x+6, y);
+    drawShape(x, y, offset, CURSIVE_A, CURSIVE_A_SIZE);
+    x += CURSIVE_A_SIZE;
+    drawShape(x, y, offset, CURSIVE_M, CURSIVE_M_SIZE);
+    x += CURSIVE_M_SIZE;
+
     wait_1s(2);
     clearDisplay();
-    x = 30;
+
+    x = 29;
     y = 2;
-    drawA(x, y);
-    drawl(x+6, y);
-    drawl(x+8, y);
-    drawSpace();
-    x = 41;
+    drawShape(x, y, offset, CURSIVE_A, CURSIVE_A_SIZE);
+    x += CURSIVE_A_SIZE - 1;
+    drawShape(x, y, offset, CURSIVE_LOWER_L, CURSIVE_LOWER_L_SIZE);
+    x += CURSIVE_LOWER_L_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_L, CURSIVE_LOWER_L_SIZE);
+    x += CURSIVE_LOWER_L_SIZE;
+    x++; // empty space
+    drawShape(x, y, offset, CURSIVE_M, CURSIVE_M_SIZE);
+    x += CURSIVE_M_SIZE;
+    drawPixel(x, y + 1, 3); // Instead of space, connect the cursive letters
+    x++;
+    drawShape(x, y, offset, CURSIVE_LOWER_A, CURSIVE_LOWER_A_SIZE);
+
+    wait_1ms(time);
+    clearDisplay();
+
+    x = 27;
     y = 2;
-    drawM(x, y);
-    x = 51;
+    drawShape(x, y, offset, CURSIVE_A, CURSIVE_A_SIZE);
+    x += CURSIVE_A_SIZE - 1;
+    drawShape(x, y, offset, CURSIVE_LOWER_L, CURSIVE_LOWER_L_SIZE);
+    x += CURSIVE_LOWER_L_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_L, CURSIVE_LOWER_L_SIZE);
+    x += CURSIVE_LOWER_L_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_I, CURSIVE_LOWER_I_SIZE);
+    x += CURSIVE_LOWER_I_SIZE;
+    x += 2; // empty spaces
+    drawShape(x, y, offset, CURSIVE_M, CURSIVE_M_SIZE);
+    x += CURSIVE_M_SIZE;
+    drawPixel(x, y + 1, 2);
+    x++;
+    drawShape(x, y, offset, CURSIVE_LOWER_A, CURSIVE_LOWER_A_SIZE);
+    x += CURSIVE_LOWER_A_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_R, CURSIVE_LOWER_R_SIZE);
+
+    wait_1ms(time);
+    clearDisplay();
+
+    x = 22;
     y = 2;
-    drawPixel(x, y+1, 3); // Instead of space, connect the cursive letters
-    drawa(x+1, y);
+    drawShape(x, y, offset, CURSIVE_A, CURSIVE_A_SIZE);
+    x += CURSIVE_A_SIZE - 1;
+    drawShape(x, y, offset, CURSIVE_LOWER_L, CURSIVE_LOWER_L_SIZE);
+    x += CURSIVE_LOWER_L_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_L, CURSIVE_LOWER_L_SIZE);
+    x += CURSIVE_LOWER_L_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_I, CURSIVE_LOWER_I_SIZE);
+    x += CURSIVE_LOWER_I_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_S, CURSIVE_LOWER_S_SIZE);
+    x += CURSIVE_LOWER_S_SIZE;
+    x += 2; // empty spaces
+    drawShape(x, y, offset, CURSIVE_M, CURSIVE_M_SIZE);
+    x += CURSIVE_M_SIZE;
+    drawPixel(x, y + 1, 2);
+    x++;
+    drawShape(x, y, offset, CURSIVE_LOWER_A, CURSIVE_LOWER_A_SIZE);
+    x += CURSIVE_LOWER_A_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_R, CURSIVE_LOWER_R_SIZE);
+    x += CURSIVE_LOWER_R_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_I_FULL, CURSIVE_LOWER_I_FULL_SIZE);
+
+    wait_1ms(time);
+    clearDisplay();
+
+    x = 16;
+    y = 2;
+    drawShape(x, y, offset, CURSIVE_A, CURSIVE_A_SIZE);
+    x += CURSIVE_A_SIZE - 1;
+    drawShape(x, y, offset, CURSIVE_LOWER_L, CURSIVE_LOWER_L_SIZE);
+    x += CURSIVE_LOWER_L_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_L, CURSIVE_LOWER_L_SIZE);
+    x += CURSIVE_LOWER_L_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_I, CURSIVE_LOWER_I_SIZE);
+    x += CURSIVE_LOWER_I_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_S, CURSIVE_LOWER_S_SIZE);
+    x += CURSIVE_LOWER_S_SIZE;
+    drawPixel(x, y + 1, 2);
+    x++;
+    drawShape(x, y, offset, CURSIVE_LOWER_O, CURSIVE_LOWER_O_SIZE);
+    x += CURSIVE_LOWER_O_SIZE;
+    x += 3; // empty spaces
+    drawShape(x, y, offset, CURSIVE_M, CURSIVE_M_SIZE);
+    x += CURSIVE_M_SIZE;
+    drawPixel(x, y + 1, 2);
+    x++;
+    drawShape(x, y, offset, CURSIVE_LOWER_A, CURSIVE_LOWER_A_SIZE);
+    x += CURSIVE_LOWER_A_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_R, CURSIVE_LOWER_R_SIZE);
+    x += CURSIVE_LOWER_R_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_I_FULL, CURSIVE_LOWER_I_FULL_SIZE);
+    x += CURSIVE_LOWER_I_FULL_SIZE;
+    drawPixel(x, y + 1, 2);
+    x++;
+    drawShape(x, y, offset, CURSIVE_LOWER_A, CURSIVE_LOWER_A_SIZE);
+
+    wait_1ms(time);
+    clearDisplay();
+
+    x = 10;
+    y = 2;
+    drawShape(x, y, offset, CURSIVE_A, CURSIVE_A_SIZE);
+    x += CURSIVE_A_SIZE - 1;
+    drawShape(x, y, offset, CURSIVE_LOWER_L, CURSIVE_LOWER_L_SIZE);
+    x += CURSIVE_LOWER_L_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_L, CURSIVE_LOWER_L_SIZE);
+    x += CURSIVE_LOWER_L_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_I, CURSIVE_LOWER_I_SIZE);
+    x += CURSIVE_LOWER_I_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_S, CURSIVE_LOWER_S_SIZE);
+    x += CURSIVE_LOWER_S_SIZE;
+    drawPixel(x, y + 1, 2);
+    x++;
+    drawShape(x, y, offset, CURSIVE_LOWER_O, CURSIVE_LOWER_O_SIZE);
+    x += CURSIVE_LOWER_O_SIZE;
+    drawPixel(x, y + 1, 0);
+    x++;
+    drawShape(x, y, offset, CURSIVE_LOWER_N, CURSIVE_LOWER_N_SIZE);
+    x += CURSIVE_LOWER_N_SIZE;
+    x += 3; // empty spaces
+    drawShape(x, y, offset, CURSIVE_M, CURSIVE_M_SIZE);
+    x += CURSIVE_M_SIZE;
+    drawPixel(x, y + 1, 2);
+    x++;
+    drawShape(x, y, offset, CURSIVE_LOWER_A, CURSIVE_LOWER_A_SIZE);
+    x += CURSIVE_LOWER_A_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_R, CURSIVE_LOWER_R_SIZE);
+    x += CURSIVE_LOWER_R_SIZE;
+    drawShape(x, y, offset, CURSIVE_LOWER_I_FULL, CURSIVE_LOWER_I_FULL_SIZE);
+    x += CURSIVE_LOWER_I_FULL_SIZE;
+    drawPixel(x, y + 1, 2);
+    x++;
+    drawShape(x, y, offset, CURSIVE_LOWER_A, CURSIVE_LOWER_A_SIZE);
+    x += CURSIVE_LOWER_A_SIZE - 2;
+    drawShape(x, y, offset, CURSIVE_LOWER_S, CURSIVE_LOWER_S_SIZE);
 }
 
 // Not finished
@@ -243,19 +334,19 @@ void initSSI()
 
     GPIO_PORTA_AFSEL_R |= (CLK | CS | DIN); // Enable alternate function
     GPIO_PORTA_AFSEL_R &= ~(DC | RST);      // Disable alternate function
-    GPIO_PORTA_PCTL_R |=                  // Assign the SSI signals to the appropriate pins
+    GPIO_PORTA_PCTL_R |=      // Assign the SSI signals to the appropriate pins
             ((GPIOPCTL << 8) | (GPIOPCTL << 12) | (GPIOPCTL << 20));
     GPIO_PORTA_PCTL_R &= ~(DC | RST);     // Assign as GPIO
     GPIO_PORTA_DIR_R |= (DC | RST);                     // Set Outputs
-    GPIO_PORTA_DEN_R |= (CLK | CS | DIN | DC | RST);    // Enable the pin's digital function
+    GPIO_PORTA_DEN_R |= (CLK | CS | DIN | DC | RST); // Enable the pin's digital function
     GPIO_PORTA_DATA_R |= RST;                           // Set RST (HIGH)
 
     /* LCD Serial interface maximum 4.0 Mbits/s */
     /* SSInClk = SysClk / (CPSDVSR * (1 + SCR)) */
-    SSI0_CR1_R &= ~SSE;                             // SSE bit is clear before making any configuration changes
-    SSI0_CR1_R &= MASTER_MODE;                      // Select whether the SSI is a master or slave
-    SSI0_CC_R = 0x0;                                // Configure the SSI clock source
-    SSI0_CPSR_R = 0x02;                             // Configure the clock prescale divisor; value must be an even number from 2 to 254
+    SSI0_CR1_R &= ~SSE; // SSE bit is clear before making any configuration changes
+    SSI0_CR1_R &= MASTER_MODE;    // Select whether the SSI is a master or slave
+    SSI0_CC_R = 0x0;                           // Configure the SSI clock source
+    SSI0_CPSR_R = 0x02; // Configure the clock prescale divisor; value must be an even number from 2 to 254
     SSI0_CR0_R = (SCR | SPH | SPO | FRF | DSS);     // Write SSI configuration
     SSI0_CR1_R |= SSE; // Enable the SSI by setting the SSE bit
 }
@@ -274,4 +365,7 @@ void initLCD()
 
     clearDisplay();
     drawLogo();
+
+    wait_1s(2);
+    clearDisplay();
 }

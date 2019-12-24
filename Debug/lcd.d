@@ -12,6 +12,7 @@ lcd.obj: /home/amarias/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/inclu
 lcd.obj: /home/amarias/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/include/machine/_stdint.h
 lcd.obj: /home/amarias/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/include/sys/_stdint.h
 lcd.obj: ../timer.h
+lcd.obj: ../letters.h
 
 ../lcd.c: 
 ../tm4c123gh6pm.h: 
@@ -25,3 +26,4 @@ lcd.obj: ../timer.h
 /home/amarias/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/include/machine/_stdint.h: 
 /home/amarias/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/include/sys/_stdint.h: 
 ../timer.h: 
+../letters.h: 

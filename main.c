@@ -34,6 +34,7 @@ int main(void)
 {
     setup();
 
+    wait_1s(2);
     menu();
     while(1){
     }

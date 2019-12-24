@@ -14,11 +14,8 @@ void reset();
 void setAddress(uint8_t x, uint8_t y);
 
 void clearDisplay();
-void drawSpace();
-void drawA(uint8_t x, uint8_t y);
-void drawa(uint8_t x, uint8_t y);
-void drawl(uint8_t x, uint8_t y);
-void drawM(uint8_t x, uint8_t y);
+void drawShape(uint8_t x, uint8_t y, uint8_t offset, uint8_t shape[], int arraySize);
+void drawPixel(uint8_t x, uint8_t y, uint8_t offset);
 void drawLogo();
 void menu();
 
