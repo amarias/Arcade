@@ -91,8 +91,10 @@ enum
 
 /**
  * Maps the index for each character per fontType
+ * !!! Warning: If any font headers change, this array must change as well
  */
-const uint8_t textMap[][numOfFonts] = { { 0, 0, 0 }, // Space
+const uint8_t textMap[][numOfFonts] =
+{       { 0, 0, 0 }, // Space
         { 0, 0, 0 }, // !
         { 0, 0, 0 }, // "
         { 0, 0, 0 }, // #
@@ -307,6 +309,9 @@ void drawShape(uint8_t x, uint8_t y, uint8_t offset, const uint8_t shape[],
     }
 }
 
+/**
+ * Draws the given characters in the given font
+ */
 void drawText(uint8_t x, uint8_t y, uint8_t offset, char str[], int textSize,
               TextFont fontType)
 {
