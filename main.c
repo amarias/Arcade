@@ -9,9 +9,8 @@
 #include "tm4c123gh6pm.h"
 #include "timer.h"
 #include "lcd.h"
-#include <stdint.h>
 
-#define PORT_F (1 << 5) // Green LED
+#define PORT_F (1 << 5) // LED
 #define LED_GREEN (1 << 3)
 
 /**

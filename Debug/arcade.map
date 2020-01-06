@@ -1,30 +1,32 @@
 ******************************************************************************
                   TI ARM Linker Unix v18.12.4                  
 ******************************************************************************
->> Linked Mon Dec 23 20:21:57 2019
+>> Linked Mon Jan  6 15:15:38 2020
 
 OUTPUT FILE NAME:   <arcade.out>
-ENTRY POINT SYMBOL: "_c_int00_noinit_noargs"  address: 000010a9
+ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 000008f5
 
 
 MEMORY CONFIGURATION
 
          name            origin    length      used     unused   attr    fill
 ----------------------  --------  ---------  --------  --------  ----  --------
-  FLASH                 00000000   00040000  000011cc  0003ee34  R  X
-  SRAM                  20000000   00008000  00000200  00007e00  RW X
+  FLASH                 00000000   00040000  00000ac4  0003f53c  R  X
+  SRAM                  20000000   00008000  00000208  00007df8  RW X
 
 
 SEGMENT ALLOCATION MAP
 
 run origin  load origin   length   init length attrs members
 ----------  ----------- ---------- ----------- ----- -------
-00000000    00000000    000011cc   000011cc    r-x
+00000000    00000000    00000ac4   00000ac4    r-x
   00000000    00000000    0000026c   0000026c    r-- .intvecs
-  0000026c    0000026c    00000e7c   00000e7c    r-x .text
-  000010e8    000010e8    000000e4   000000e4    r-- .const
-20000000    20000000    00000200   00000000    rw-
+  0000026c    0000026c    000006ec   000006ec    r-x .text
+  00000958    00000958    00000158   00000158    r-- .const
+  00000ab0    00000ab0    00000014   00000014    r-- .cinit
+20000000    20000000    00000208   00000000    rw-
   20000000    20000000    00000200   00000000    rw- .stack
+  20000200    20000200    00000008   00000000    rw- .bss
 
 
 SECTION ALLOCATION MAP
@@ -35,68 +37,33 @@ section   page    origin      length       input sections
 .intvecs   0    00000000    0000026c     
                   00000000    0000026c     tm4c123gh6pm_startup_ccs.obj (.intvecs)
 
-.text      0    0000026c    00000e7c     
-                  0000026c    00000d58     lcd.obj (.text)
-                  00000fc4    0000008c     timer.obj (.text)
-                  00001050    00000058     main.obj (.text)
-                  000010a8    0000002c     rtsv7M4_T_le_v4SPD16_eabi.lib : boot_cortex_m.c.obj (.text:_c_int00_noinit_noargs:_c_int00_noinit_noargs)
-                  000010d4    0000000c     tm4c123gh6pm_startup_ccs.obj (.text)
-                  000010e0    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : pre_init.c.obj (.text:_system_pre_init)
-                  000010e4    00000004                                   : exit.c.obj (.text:abort:abort)
+.text      0    0000026c    000006ec     
+                  0000026c    0000055c     lcd.obj (.text)
+                  000007c8    0000008c     timer.obj (.text)
+                  00000854    0000005c     main.obj (.text)
+                  000008b0    00000044     rtsv7M4_T_le_v4SPD16_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit:__TI_auto_init_nobinit_nopinit)
+                  000008f4    00000034                                   : boot_cortex_m.c.obj (.text:_c_int00_noargs:_c_int00_noargs)
+                  00000928    0000001c                                   : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init_nomemset:__TI_zero_init_nomemset)
+                  00000944    0000000c     tm4c123gh6pm_startup_ccs.obj (.text)
+                  00000950    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : pre_init.c.obj (.text:_system_pre_init)
+                  00000954    00000004                                   : exit.c.obj (.text:abort:abort)
 
-.const     0    000010e8    000000e4     
-                  000010e8    0000000a     lcd.obj (.const:.string:$P$T48$2)
-                  000010f2    0000000a     lcd.obj (.const:.string:$P$T52$6)
-                  000010fc    0000000a     lcd.obj (.const:.string:$P$T58$12)
-                  00001106    0000000a     lcd.obj (.const:.string:$P$T66$20)
-                  00001110    0000000a     lcd.obj (.const:.string:$P$T76$30)
-                  0000111a    0000000a     lcd.obj (.const:.string:$P$T88$42)
-                  00001124    00000007     lcd.obj (.const:.string:$P$T47$1)
-                  0000112b    00000007     lcd.obj (.const:.string:$P$T49$3)
-                  00001132    00000007     lcd.obj (.const:.string:$P$T54$8)
-                  00001139    00000007     lcd.obj (.const:.string:$P$T61$15)
-                  00001140    00000007     lcd.obj (.const:.string:$P$T70$24)
-                  00001147    00000007     lcd.obj (.const:.string:$P$T81$35)
-                  0000114e    00000006     lcd.obj (.const:.string:$P$T53$7)
-                  00001154    00000006     lcd.obj (.const:.string:$P$T59$13)
-                  0000115a    00000006     lcd.obj (.const:.string:$P$T67$21)
-                  00001160    00000006     lcd.obj (.const:.string:$P$T77$31)
-                  00001166    00000006     lcd.obj (.const:.string:$P$T80$34)
-                  0000116c    00000006     lcd.obj (.const:.string:$P$T89$43)
-                  00001172    00000006     lcd.obj (.const:.string:$P$T92$46)
-                  00001178    00000005     lcd.obj (.const:.string:$P$T60$14)
-                  0000117d    00000005     lcd.obj (.const:.string:$P$T65$19)
-                  00001182    00000005     lcd.obj (.const:.string:$P$T68$22)
-                  00001187    00000005     lcd.obj (.const:.string:$P$T74$28)
-                  0000118c    00000005     lcd.obj (.const:.string:$P$T78$32)
-                  00001191    00000005     lcd.obj (.const:.string:$P$T85$39)
-                  00001196    00000005     lcd.obj (.const:.string:$P$T87$41)
-                  0000119b    00000005     lcd.obj (.const:.string:$P$T90$44)
-                  000011a0    00000005     lcd.obj (.const:.string:$P$T93$47)
-                  000011a5    00000004     lcd.obj (.const:.string:$P$T75$29)
-                  000011a9    00000004     lcd.obj (.const:.string:$P$T86$40)
-                  000011ad    00000002     lcd.obj (.const:.string:$P$T50$4)
-                  000011af    00000002     lcd.obj (.const:.string:$P$T51$5)
-                  000011b1    00000002     lcd.obj (.const:.string:$P$T55$9)
-                  000011b3    00000002     lcd.obj (.const:.string:$P$T56$10)
-                  000011b5    00000002     lcd.obj (.const:.string:$P$T57$11)
-                  000011b7    00000002     lcd.obj (.const:.string:$P$T62$16)
-                  000011b9    00000002     lcd.obj (.const:.string:$P$T63$17)
-                  000011bb    00000002     lcd.obj (.const:.string:$P$T64$18)
-                  000011bd    00000002     lcd.obj (.const:.string:$P$T71$25)
-                  000011bf    00000002     lcd.obj (.const:.string:$P$T72$26)
-                  000011c1    00000002     lcd.obj (.const:.string:$P$T73$27)
-                  000011c3    00000002     lcd.obj (.const:.string:$P$T82$36)
-                  000011c5    00000002     lcd.obj (.const:.string:$P$T83$37)
-                  000011c7    00000002     lcd.obj (.const:.string:$P$T84$38)
-                  000011c9    00000001     lcd.obj (.const:.string:$P$T69$23)
-                  000011ca    00000001     lcd.obj (.const:.string:$P$T79$33)
-                  000011cb    00000001     lcd.obj (.const:.string:$P$T91$45)
+.const     0    00000958    00000158     
+                  00000958    0000011d     lcd.obj (.const:textMap)
+                  00000a75    00000039     lcd.obj (.const:.string:cursiveChars)
+                  00000aae    00000001     lcd.obj (.const:.string:boldChars)
+                  00000aaf    00000001     lcd.obj (.const:.string:regularChars)
 
-.cinit     0    00000000    00000000     UNINITIALIZED
+.cinit     0    00000ab0    00000014     
+                  00000ab0    00000008     (.cinit..bss.load) [load image, compression = zero_init]
+                  00000ab8    00000004     (__TI_handler_table)
+                  00000abc    00000008     (__TI_cinit_table)
 
 .init_array 
 *          0    00000000    00000000     UNINITIALIZED
+
+.bss       0    20000200    00000008     UNINITIALIZED
+                  20000200    00000008     (.common:currentFont)
 
 .stack     0    20000000    00000200     UNINITIALIZED
                   20000000    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : boot_cortex_m.c.obj (.stack)
@@ -107,104 +74,151 @@ MODULE SUMMARY
        Module                         code   ro data   rw data
        ------                         ----   -------   -------
     ./
-       lcd.obj                        3416   228       0      
+       lcd.obj                        1372   344       8      
        tm4c123gh6pm_startup_ccs.obj   12     620       0      
        timer.obj                      140    0         0      
-       main.obj                       88     0         0      
+       main.obj                       92     0         0      
     +--+------------------------------+------+---------+---------+
-       Total:                         3656   848       0      
+       Total:                         1616   964       8      
                                                               
     /home/amarias/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/lib/rtsv7M4_T_le_v4SPD16_eabi.lib
-       boot_cortex_m.c.obj            44     0         0      
+       autoinit.c.obj                 68     0         0      
+       boot_cortex_m.c.obj            52     0         0      
+       copy_zero_init.c.obj           28     0         0      
        exit.c.obj                     4      0         0      
        pre_init.c.obj                 4      0         0      
     +--+------------------------------+------+---------+---------+
-       Total:                         52     0         0      
+       Total:                         156    0         0      
                                                               
        Stack:                         0      0         512    
+       Linker Generated:              0      20        0      
     +--+------------------------------+------+---------+---------+
-       Grand Total:                   3708   848       512    
+       Grand Total:                   1772   984       520    
+
+
+LINKER GENERATED COPY TABLES
+
+__TI_cinit_table @ 00000abc records: 1, size/record: 8, table size: 8
+	.bss: load addr=00000ab0, load size=00000008 bytes, run addr=20000200, run size=00000008 bytes, compression=zero_init
+
+
+LINKER GENERATED HANDLER TABLE
+
+__TI_handler_table @ 00000ab8 records: 1, size/record: 4, table size: 4
+	index: 0, handler: __TI_zero_init
 
 
 GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name 
 
-address   name                  
--------   ----                  
-000010e5  C$$EXIT               
-000010d5  ResetISR              
-20000200  __STACK_END           
-00000200  __STACK_SIZE          
-20000200  __STACK_TOP           
-ffffffff  __TI_pprof_out_hndl   
-ffffffff  __TI_prof_data_size   
-ffffffff  __TI_prof_data_start  
-00000000  __TI_static_base__    
-ffffffff  __binit__             
-ffffffff  __c_args__            
-UNDEFED   __mpu_init            
-20000000  __stack               
-000010a9  _c_int00_noinit_noargs
-000010e1  _system_pre_init      
-000010e5  abort                 
-ffffffff  binit                 
-00000309  clearDisplay          
-00000455  drawLogo              
-00000337  drawPixel             
-000003ad  drawShape             
-00000000  g_pfnVectors          
-00000363  getVerticalData       
-00001051  greenLED              
-00000f15  initLCD               
-00000e7d  initSSI               
-00000fc5  initTimer             
-0000108b  main                  
-00000e73  menu                  
-000002a9  reset                 
-000002c7  setAddress            
-00001071  setup                 
-0000026d  transmitData          
-00000fe9  wait_1ms              
-0000101b  wait_1s               
+address   name                          
+-------   ----                          
+00000955  C$$EXIT                       
+00000945  ResetISR                      
+20000200  __STACK_END                   
+00000200  __STACK_SIZE                  
+20000200  __STACK_TOP                   
+00000abc  __TI_CINIT_Base               
+00000ac4  __TI_CINIT_Limit              
+00000ab8  __TI_Handler_Table_Base       
+00000abc  __TI_Handler_Table_Limit      
+000008b1  __TI_auto_init_nobinit_nopinit
+ffffffff  __TI_pprof_out_hndl           
+ffffffff  __TI_prof_data_size           
+ffffffff  __TI_prof_data_start          
+00000000  __TI_static_base__            
+00000929  __TI_zero_init_nomemset       
+ffffffff  __binit__                     
+ffffffff  __c_args__                    
+UNDEFED   __mpu_init                    
+20000000  __stack                       
+000008f5  _c_int00_noargs               
+UNDEFED   _system_post_cinit            
+00000951  _system_pre_init              
+00000955  abort                         
+ffffffff  binit                         
+00000aae  boldChars                     
+00000331  clearDisplay                  
+20000200  currentFont                   
+00000a75  cursiveChars                  
+0000052d  drawLogo                      
+0000035f  drawPixel                     
+000003d5  drawShape                     
+00000485  drawText                      
+00000000  g_pfnVectors                  
+0000038b  getVerticalData               
+00000855  greenLED                      
+000006f7  initLCD                       
+00000669  initSSI                       
+000007c9  initTimer                     
+0000088f  main                          
+0000062b  menu                          
+00000aaf  regularChars                  
+0000026d  reset                         
+000002fb  setAddress                    
+0000062d  setFont                       
+00000875  setup                         
+00000958  textMap                       
+000002c7  transmitBasicInstruction      
+0000028b  transmitData                  
+000002e1  transmitExtendedInstruction   
+000007ed  wait_1ms                      
+0000081f  wait_1s                       
 
 
 GLOBAL SYMBOLS: SORTED BY Symbol Address 
 
-address   name                  
--------   ----                  
-00000000  __TI_static_base__    
-00000000  g_pfnVectors          
-00000200  __STACK_SIZE          
-0000026d  transmitData          
-000002a9  reset                 
-000002c7  setAddress            
-00000309  clearDisplay          
-00000337  drawPixel             
-00000363  getVerticalData       
-000003ad  drawShape             
-00000455  drawLogo              
-00000e73  menu                  
-00000e7d  initSSI               
-00000f15  initLCD               
-00000fc5  initTimer             
-00000fe9  wait_1ms              
-0000101b  wait_1s               
-00001051  greenLED              
-00001071  setup                 
-0000108b  main                  
-000010a9  _c_int00_noinit_noargs
-000010d5  ResetISR              
-000010e1  _system_pre_init      
-000010e5  C$$EXIT               
-000010e5  abort                 
-20000000  __stack               
-20000200  __STACK_END           
-20000200  __STACK_TOP           
-ffffffff  __TI_pprof_out_hndl   
-ffffffff  __TI_prof_data_size   
-ffffffff  __TI_prof_data_start  
-ffffffff  __binit__             
-ffffffff  __c_args__            
-ffffffff  binit                 
-UNDEFED   __mpu_init            
+address   name                          
+-------   ----                          
+00000000  __TI_static_base__            
+00000000  g_pfnVectors                  
+00000200  __STACK_SIZE                  
+0000026d  reset                         
+0000028b  transmitData                  
+000002c7  transmitBasicInstruction      
+000002e1  transmitExtendedInstruction   
+000002fb  setAddress                    
+00000331  clearDisplay                  
+0000035f  drawPixel                     
+0000038b  getVerticalData               
+000003d5  drawShape                     
+00000485  drawText                      
+0000052d  drawLogo                      
+0000062b  menu                          
+0000062d  setFont                       
+00000669  initSSI                       
+000006f7  initLCD                       
+000007c9  initTimer                     
+000007ed  wait_1ms                      
+0000081f  wait_1s                       
+00000855  greenLED                      
+00000875  setup                         
+0000088f  main                          
+000008b1  __TI_auto_init_nobinit_nopinit
+000008f5  _c_int00_noargs               
+00000929  __TI_zero_init_nomemset       
+00000945  ResetISR                      
+00000951  _system_pre_init              
+00000955  C$$EXIT                       
+00000955  abort                         
+00000958  textMap                       
+00000a75  cursiveChars                  
+00000aae  boldChars                     
+00000aaf  regularChars                  
+00000ab8  __TI_Handler_Table_Base       
+00000abc  __TI_CINIT_Base               
+00000abc  __TI_Handler_Table_Limit      
+00000ac4  __TI_CINIT_Limit              
+20000000  __stack                       
+20000200  __STACK_END                   
+20000200  __STACK_TOP                   
+20000200  currentFont                   
+ffffffff  __TI_pprof_out_hndl           
+ffffffff  __TI_prof_data_size           
+ffffffff  __TI_prof_data_start          
+ffffffff  __binit__                     
+ffffffff  __c_args__                    
+ffffffff  binit                         
+UNDEFED   __mpu_init                    
+UNDEFED   _system_post_cinit            
 
-[35 symbols]
+[51 symbols]
